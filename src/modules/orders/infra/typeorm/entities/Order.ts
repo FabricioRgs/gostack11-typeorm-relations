@@ -7,6 +7,7 @@ import {
   JoinColumn,
   Column,
   OneToMany,
+  // JoinTable,
 } from 'typeorm';
 
 import Customer from '@modules/customers/infra/typeorm/entities/Customer';
@@ -24,7 +25,10 @@ class Order {
   @Column()
   customer_id: string;
 
-  @OneToMany(() => OrdersProducts, ordersProducts => ordersProducts.product)
+  @OneToMany(() => OrdersProducts, ordersProducts => ordersProducts.product, {
+    cascade: ['insert'],
+  })
+  // @JoinTable()
   order_products: OrdersProducts[];
 
   @CreateDateColumn()
