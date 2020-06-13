@@ -4,8 +4,7 @@ import {
   PrimaryGeneratedColumn,
   CreateDateColumn,
   UpdateDateColumn,
-  ManyToMany,
-  JoinTable,
+  OneToMany,
 } from 'typeorm';
 
 import OrdersProducts from '@modules/orders/infra/typeorm/entities/OrdersProducts';
@@ -24,18 +23,7 @@ class Product {
   @Column()
   quantity: number;
 
-  @ManyToMany(() => OrdersProducts, ordersProducts => ordersProducts.product)
-  @JoinTable({
-    name: 'orders_products', // table name for the junction table of this relation
-    joinColumn: {
-      name: 'order',
-      referencedColumnName: 'id',
-    },
-    inverseJoinColumn: {
-      name: 'product',
-      referencedColumnName: 'id',
-    },
-  })
+  @OneToMany(() => OrdersProducts, ordersProducts => ordersProducts.product)
   order_products: OrdersProducts[];
 
   @CreateDateColumn()

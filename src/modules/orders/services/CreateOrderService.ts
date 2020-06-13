@@ -42,6 +42,10 @@ class CreateOrderService {
 
     const productsFetched = await this.productsRepository.findAllById(products);
 
+    if (products.length !== productsFetched.length) {
+      throw new AppError('There are invalid products');
+    }
+
     const productsObj: IProductObj = {};
 
     products.forEach(item => {
@@ -52,18 +56,23 @@ class CreateOrderService {
       };
     });
 
-    const productagoravai = productsFetched.map(item => {
+    const productWithPrice = productsFetched.map(item => {
       const prod = productsObj[item.id];
       prod.price = item.price;
+
+      if (prod.quantity > item.quantity) {
+        throw new AppError(`Product ${item.name} have insufficent quantities`);
+      }
+
       return prod;
     });
 
-    console.log(productagoravai);
-
     const order = await this.ordersRepository.create({
       customer,
-      products: productagoravai,
+      products: productWithPrice,
     });
+
+    await this.productsRepository.updateQuantity(products);
 
     return order;
   }

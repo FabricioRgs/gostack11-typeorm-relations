@@ -6,8 +6,7 @@ import {
   OneToOne,
   JoinColumn,
   Column,
-  ManyToMany,
-  JoinTable,
+  OneToMany,
 } from 'typeorm';
 
 import Customer from '@modules/customers/infra/typeorm/entities/Customer';
@@ -22,24 +21,13 @@ class Order {
   @JoinColumn({ name: 'customer_id' })
   customer: Customer;
 
-  @Column()
+  @Column('uuid')
   customer_id: string;
 
-  @ManyToMany(() => OrdersProducts, ordersProducts => ordersProducts.order, {
+  @OneToMany(() => OrdersProducts, orderToProducts => orderToProducts.order, {
     cascade: ['insert'],
   })
-  @JoinTable({
-    name: 'orders_products', // table name for the junction table of this relation
-    joinColumn: {
-      name: 'product',
-      referencedColumnName: 'id',
-    },
-    inverseJoinColumn: {
-      name: 'order',
-      referencedColumnName: 'id',
-    },
-  })
-  order_products: OrdersProducts[];
+  public order_products: OrdersProducts[];
 
   @CreateDateColumn()
   created_at: Date;
